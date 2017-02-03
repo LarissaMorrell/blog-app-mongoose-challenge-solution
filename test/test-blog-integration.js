@@ -131,57 +131,44 @@ describe('Blog App API resource', function() {
                         blogPost.author.firstName + " " + blogPost.author.lastName);
                     resPost.content.should.equal(blogPost.content);
                     resPost.title.should.equal(blogPost.title);
-                    console.log("respost= " + resPost.created + "\nblogpost= " + blogPost.created);
                     Date(resPost.created).should.equal(Date(blogPost.created));
                 });
         });
     });
 
-    // describe('POST endpoint', function() {
-    //     // strategy: make a POST request with data,
-    //     // then prove that the blog post we get back has
-    //     // right keys, and that `id` is there (which means
-    //     // the data was inserted into db)
-    //     it('should add a new blog post', function() {
+    describe('POST endpoint', function() {
+        // strategy: make a POST request with data,
+        // then prove that the blog post we get back has
+        // right keys, and that `id` is there (which means
+        // the data was inserted into db)
+        it('should add a new blog post', function() {
 
-    //         const newBlogPost = generateBlogPostData();
-    //         return chai.request(app)
-    //             .post('/posts')
-    //             .send(newBlogPost)
-    //             .then(function(res) {
+            const newBlogPost = generateBlogPostData();
+            return chai.request(app)
+                .post('/posts')
+                .send(newBlogPost)
+                .then(function(res) {
+                    res.should.have.status(201);
+                    res.should.be.json;
+                    res.body.should.be.a('object');
+                    res.body.should.include.keys(
+                        'id', 'author', 'content', 'title', 'created');
+                    res.body.id.should.not.be.null;
+                    res.body.content.should.equal(newBlogPost.content);
+                    res.body.title.should.equal(newBlogPost.title);
+                    Date(res.body.created).should.equal(Date(newBlogPost.created));
 
-    //             console.log("new blogpost= ++++++++++++++++++++++++++++++++++++++++++++++" + newBlogPost.firstName);
-    //         	console.log("res blogpost= ++++++++++++++++++++++++++++++++++++++++++++++" + res.body.firstName);
-
-
-
-    //                 res.should.have.status(201);
-    //                 res.should.be.json;
-    //                 res.body.should.be.a('object');
-    //                 res.body.should.include.keys(
-    //                     'id', 'author', 'content', 'title', 'created');
-    //                 // res.body.author.should.equal(
-    //                 // 	newBlogPost.author.firstName + " " + newBlogPost.author.lastName);
-    //                 // cause Mongo should have created id on insertion
-    //                 res.body.id.should.not.be.null;
-    //                 res.body.content.should.equal(newBlogPost.content);
-    //                 res.body.title.should.equal(newBlogPost.title);
-    //                 Date(res.body.created).should.equal(Date(newBlogPost.created));
-
-    //                 return BlogPost.findById(res.body.id);
-    //             })
-    //             .then(function(blogpost) {
-    //                 blogpost.author.should.equal(newBlogPost.author);
-    //                 blogpost.cuisine.should.equal(newRestaurant.cuisine);
-    //                 blogpost.borough.should.equal(newRestaurant.borough);
-    //                 blogpost.name.should.equal(newRestaurant.name);
-    //                 blogpost.grade.should.equal(mostRecentGrade);
-    //                 blogpost.address.building.should.equal(newRestaurant.address.building);
-    //                 blogpost.address.street.should.equal(newRestaurant.address.street);
-    //                 blogpost.address.zipcode.should.equal(newRestaurant.address.zipcode);
-    //             });
-    //     });
-    // });
+                    return BlogPost.findById(res.body.id);
+                })
+                .then(function(blogpost) {
+                    blogpost.author.firstName.should.equal(newBlogPost.author.firstName);
+                    blogpost.author.lastName.should.equal(newBlogPost.author.lastName);
+                    blogpost.content.should.equal(newBlogPost.content);
+                    blogpost.title.should.equal(newBlogPost.title);
+                    Date(blogpost.created).should.equal(Date(newBlogPost.created));
+                });
+        });
+    });
 
 
     describe('PUT endpoint', function() {
@@ -225,36 +212,36 @@ describe('Blog App API resource', function() {
         });
     });
 
-    // describe('DELETE endpoint', function() {
-    //   // strategy:
-    //   //  1. get a restaurant
-    //   //  2. make a DELETE request for that restaurant's id
-    //   //  3. assert that response has right status code
-    //   //  4. prove that restaurant with the id doesn't exist in db anymore
-    //   it('delete a restaurant by id', function() {
+    describe('DELETE endpoint', function() {
+        // strategy:
+        //  1. get a blog post
+        //  2. make a DELETE request for that blog post's id
+        //  3. assert that response has right status code
+        //  4. prove that blog post with the id doesn't exist in db anymore
+        it('delete a blog post by id', function() {
 
-    //     let restaurant;
+            let blogPost;
 
-    //     return Restaurant
-    //       .findOne()
-    //       .exec()
-    //       .then(function(_restaurant) {
-    //         restaurant = _restaurant;
-    //         return chai.request(app).delete(`/restaurants/${restaurant.id}`);
-    //       })
-    //       .then(function(res) {
-    //         res.should.have.status(204);
-    //         return Restaurant.findById(restaurant.id).exec();
-    //       })
-    //       .then(function(_restaurant) {
-    //         // when a variable's value is null, chaining `should`
-    //         // doesn't work. so `_restaurant.should.be.null` would raise
-    //         // an error. `should.be.null(_restaurant)` is how we can
-    //         // make assertions about a null value.
-    //         should.not.exist(_restaurant);
-    //       });
-    //   });
-    // });
+            return BlogPost
+                .findOne()
+                .exec()
+                .then(function(_blogPost) {
+                    blogPost = _blogPost;
+                    return chai.request(app).delete(`/posts/${blogPost.id}`);
+                })
+                .then(function(res) {
+                    res.should.have.status(204);
+                    return BlogPost.findById(blogPost.id).exec();
+                })
+                .then(function(_blogPost) {
+                    // when a variable's value is null, chaining `should`
+                    // doesn't work. so `_blogPost.should.be.null` would raise
+                    // an error. `should.be.null(_blogPost)` is how we can
+                    // make assertions about a null value.
+                    should.not.exist(_blogPost);
+                });
+        });
+    });
 
     function printObj(res) {
         console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
