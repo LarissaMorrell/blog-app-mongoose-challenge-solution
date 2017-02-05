@@ -200,7 +200,7 @@ describe('Blog App API resource', function() {
                         .send(updateData);
                 })
                 .then(function(res) {
-                    // res.should.have.status(204);
+                    res.should.have.status(201);
 
                     return BlogPost.findById(updateData.id).exec();
                 })
@@ -230,7 +230,7 @@ describe('Blog App API resource', function() {
                     return chai.request(app).delete(`/posts/${blogPost.id}`);
                 })
                 .then(function(res) {
-                    res.should.have.status(204);
+                    res.should.have.status(201);
                     return BlogPost.findById(blogPost.id).exec();
                 })
                 .then(function(_blogPost) {
